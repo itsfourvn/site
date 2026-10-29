@@ -1,5 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "itsfourvn-site",
+  "name": "site",
   "pages_build_output_dir": "."
 }
+// wrangler.jsonc
