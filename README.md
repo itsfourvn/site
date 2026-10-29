@@ -1,4 +1,4 @@
-[![Netlify Status](https://api.netlify.com/api/v1/badges/d8808274-cc3e-4859-aa0f-67aa156ecc08/deploy-status)](https://app.netlify.com/projects/itsfourvn/deploys)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/3d0940b2-ea7e-4120-bf69-a78c7b3ea358/deploy-status)](https://app.netlify.com/projects/thientu/deploys)
 # Source itsfour Website
 
 #### -# `Copyright (C) 2026 itsfourvn` #-
