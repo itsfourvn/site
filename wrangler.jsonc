@@ -1,4 +1,0 @@
-"scripts": {
-  "build": "node scripts/generate-media-manifest.mjs",
-  "deploy": "wrangler pages deploy <main>"
-}
