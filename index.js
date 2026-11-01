@@ -29,6 +29,7 @@ if (musicPlayer) {
     const audio = musicPlayer.querySelector('audio');
     const toggleButton = musicPlayer.querySelector('.music-toggle');
     const progress = musicPlayer.querySelector('.music-progress');
+    audio.volume = 0.1;
     let musicTracks = [];
     let currentTrackIndex = -1;
 
