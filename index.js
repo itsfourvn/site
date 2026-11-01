@@ -313,13 +313,122 @@ function connectDiscordPresence() {
 }
 
 connectDiscordPresence();
-fetch('/fetchgithub').then(response => response.ok ? response.json() : null).then(data => {
-    if (!Array.isArray(data) || data.length < 1) return;
-    const stats = data[data.length - 1];
-    document.querySelectorAll('.stat').forEach((element, index) => element.textContent = stats[index] ?? '-');
-    document.querySelectorAll('.star').forEach((element, index) => element.textContent = data[index]?.[0] ?? '-');
-    document.querySelectorAll('.fork').forEach((element, index) => element.textContent = data[index]?.[1] ?? '-');
-}).catch(() => {});
+const githubProjects = document.querySelector('#github-projects');
+const githubProjectTemplate = githubProjects?.querySelector('.project')?.cloneNode(true);
+if (githubProjects) {
+    const status = document.createElement('div');
+    status.className = 'repo-status';
+    status.setAttribute('role', 'status');
+    status.textContent = 'Loading GitHub repositories...';
+    githubProjects.replaceChildren(status);
+}
+
+fetch('/fetchgithub').then(async response => {
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'GitHub request failed.');
+    if (!Array.isArray(data.repositories) || !Array.isArray(data.stats) || !Array.isArray(data.languages)) {
+        throw new Error('GitHub returned an invalid response.');
+    }
+    return data;
+}).then(data => {
+    document.querySelectorAll('.stat').forEach((element, index) => {
+        element.textContent = data.stats[index] ?? '-';
+    });
+    renderGitHubLanguages(data.languages);
+
+    if (!githubProjects || !githubProjectTemplate) return;
+    if (!data.repositories.length) {
+        const status = document.createElement('div');
+        status.className = 'repo-status';
+        status.setAttribute('role', 'status');
+        status.textContent = 'No public GitHub repositories found.';
+        githubProjects.replaceChildren(status);
+        return;
+    }
+
+    const cards = document.createDocumentFragment();
+    data.repositories.forEach(repository => {
+        const card = githubProjectTemplate.cloneNode(true);
+        const link = card.querySelector('a');
+        link.href = repository.url;
+        link.querySelector('.bold').textContent = `itsfourvn/${repository.name}`;
+        link.querySelector('.opaque').textContent = repository.description || 'No description';
+        card.querySelector('.star').textContent = repository.stargazerCount;
+        card.querySelector('.fork').textContent = repository.forkCount;
+
+        const language = card.querySelector('.lang');
+        language.replaceChildren();
+        if (repository.primaryLanguage) {
+            const colorDot = document.createElement('span');
+            colorDot.className = 'color-dot';
+            colorDot.style.backgroundColor = repository.primaryLanguage.color || 'transparent';
+            language.append(colorDot, document.createTextNode(repository.primaryLanguage.name));
+        } else {
+            language.textContent = 'Other';
+        }
+        cards.append(card);
+    });
+    githubProjects.replaceChildren(cards);
+}).catch(error => {
+    console.error('Unable to load GitHub repositories:', error);
+    if (!githubProjects) return;
+    const status = document.createElement('div');
+    status.className = 'repo-status';
+    status.setAttribute('role', 'status');
+    status.textContent = 'Could not load GitHub repositories.';
+    githubProjects.replaceChildren(status);
+});
+
+function renderGitHubLanguages(languages) {
+    const chart = document.querySelector('.github-languages');
+    const progress = chart?.querySelector('.language-progress');
+    const legend = chart?.querySelector('.language-legend');
+    if (!progress || !legend) return;
+
+    progress.replaceChildren();
+    legend.replaceChildren();
+    const languageCount = chart.querySelector('.language-count');
+    if (languageCount) languageCount.textContent = `${languages.length} languages`;
+    if (!languages.length) {
+        legend.textContent = 'No language data available.';
+        return;
+    }
+
+    progress.setAttribute('aria-label', languages
+        .map(language => `${language.name}: ${language.percentage.toFixed(2)}%`)
+        .join(', '));
+
+    const segments = document.createDocumentFragment();
+    const entries = document.createDocumentFragment();
+    languages.forEach(language => {
+        const color = language.color || '#6e7781';
+        const segment = document.createElement('span');
+        segment.className = 'language-progress-item';
+        segment.style.width = `${language.percentage}%`;
+        segment.style.backgroundColor = color;
+        segments.append(segment);
+
+        const item = document.createElement('li');
+        item.title = `${language.name}: ${language.percentage.toFixed(2)}%`;
+        const dot = document.createElement('span');
+        dot.className = 'language-dot';
+        dot.style.backgroundColor = color;
+
+        const name = document.createElement('span');
+        name.className = 'language-name';
+        name.textContent = language.name;
+
+        const percentage = document.createElement('span');
+        percentage.className = 'language-percentage';
+        percentage.textContent = `${language.percentage.toFixed(2)}%`;
+
+        item.append(dot, name, percentage);
+        entries.append(item);
+    });
+    progress.replaceChildren(segments);
+    legend.replaceChildren(entries);
+}
+
 const clock = document.querySelector('.clock');
 if (clock) {
     const dateFormatter = new Intl.DateTimeFormat('en-GB', {

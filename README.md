@@ -19,6 +19,11 @@ Cùng nhau thúc đẩy sự hợp tác cộng đồng khi phần mềm được
 
  `npm run dev`
 
+### Netlify
+
+The visitor counter uses Netlify Functions and the site-wide Netlify Blobs store. Install dependencies with `npm install` before deploying. Netlify discovers the function in `netlify/functions/count.mjs` and serves it at `/count`; the counter persists between deploys.
+
+To run the site locally with Netlify, use `npm run dev:netlify`.
 
 
 

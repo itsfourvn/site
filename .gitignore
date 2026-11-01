@@ -1,3 +1,7 @@
 .dev.vars
 .wrangler/
+node_modules/
 /main.rar
+
+# Local Netlify folder
+.netlify

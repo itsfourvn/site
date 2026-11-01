@@ -2,6 +2,10 @@
   "private": true,
   "scripts": {
     "build": "node scripts/generate-media-manifest.mjs",
-    "dev": "node scripts/generate-media-manifest.mjs && npx wrangler pages dev . --kv=COUNT"
+    "dev": "node scripts/generate-media-manifest.mjs && npx wrangler pages dev . --kv=COUNT",
+    "dev:netlify": "node scripts/generate-media-manifest.mjs && npx netlify dev"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^10.0.0"
   }
 }
