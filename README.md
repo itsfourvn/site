@@ -17,7 +17,7 @@
 Dự án này đã sử dụng giấy phép phần mềm tự do copyleft dành cho phần mềm và các tác phẩm khác.
 Cùng nhau thúc đẩy sự hợp tác cộng đồng khi phần mềm được vận hành trên máy chủ mạng.
 
- `npm run dev`
+ `npm.cmd run dev`
 
 ### Netlify
 
